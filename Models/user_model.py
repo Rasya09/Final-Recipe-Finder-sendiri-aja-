@@ -12,7 +12,7 @@ class UserModel:
         cursor = self.connection.cursor() # Membuka cursor untuk query sql
         try:
             query = "INSERT INTO users (nama_lengkap, password, role, email) VALUES (%s, %s, %s, %s)"
-            cursor.execute(query, (nama, email, hashed_password, role))
+            cursor.execute(query, (nama, hashed_password.decode('utf-8'), role, email))
             self.connection.commit()
         except mysql.connector.Error as e:
             print(f"Error: {e}")
@@ -29,9 +29,9 @@ class UserModel:
     
     # Membuat password menjadi bcrypt
     # bcryp merupakan fungsi hashing kata sandi untuk keamanan komputer (jadi passwordnya text unik)
-    def hash_password(password): # Fungsi untuk membuat hash dari password
+    def hash_password(self, password): # Fungsi untuk membuat hash dari password
         salt = bcrypt.gensalt()  # Membuat salt acak
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)  # Menghash password
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')  # Menghash password
         return hashed_password
     
     # Membuat fungsi untuk validasi inputan password
@@ -54,3 +54,16 @@ class UserModel:
         salt = bcrypt.gensalt()
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
         return hashed_password
+    
+    # fungsi untuk mengambil data pengguna berdasarkan email
+    def get_user_by_email(self, email):
+        cursor = self.connection.cursor()
+        query = "SELECT * FROM users WHERE email = %s"
+        cursor.execute(query, (email,))
+        user = cursor.fetchone()
+        cursor.close()
+        return user
+
+    # Fungsi untuk memeriksa apakah password yang diinput cocok dengan password yang di hash menggunakan bcrypt
+    def verify_password(self, password, hashed_password):
+        return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))

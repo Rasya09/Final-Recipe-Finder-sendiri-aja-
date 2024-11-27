@@ -33,4 +33,21 @@ class UserController:
 
         # Simpan data yang baru diinput oleh user pengguna
         self.model.create_user(nama, email, hashed_password, role)
-        self.view.show_message(f"Registrasi berhasil!!. Selamat datang {nama} sebagai {role}")
+        self.view.show_message(f"Registrasi berhasil!!. Silahkan login")
+
+    def login_user(self):
+        email = self.view.get_email()
+        password = self.view.get_password()
+
+        user = self.model.get_user_by_email(email)
+        if user is None:
+            self.view.show_message("Email tidak ditemukan")
+            return
+        
+        hashed_password = user[2] # Mengambil hashed password dari hasil query
+        if not self.model.verify_password(password, hashed_password):
+            self.view.show_message("Password salah.")
+            return
+        
+        role = user[3]
+        self.view.show_message(f"Login Berhasil Selamat datang, {user[1]} Sebagai {role}.")

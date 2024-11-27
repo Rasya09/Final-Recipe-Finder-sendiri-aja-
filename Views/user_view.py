@@ -17,3 +17,9 @@ class UserView:
     @staticmethod
     def show_message(message):
         print(message)
+
+    def get_email(self):
+        return input("Masukan email anda: ")
+
+    def get_password(self):
+        return input("Masukan Password Anda:")

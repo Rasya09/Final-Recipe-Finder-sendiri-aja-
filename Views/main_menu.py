@@ -1,22 +1,20 @@
-from Controllers.user_controller import register_user
 from setup_tables import connect_to_database
+from Controllers.user_controller import UserController
 
 def main_menu():
+    connection = connect_to_database()
+    controller = UserController(connection)
+
     while True:
         print("\n===== MAIN MENU =====")
         print("1: Registrasi")
-        print("2: Login")
-        print("3: Keluar")
-        pilihan = input("Pilih menu (1/2/3): ")
+        print("2: Keluar")
+        pilihan = input("Pilih menu (1/2): ")
 
         if pilihan == "1":
             print("\n=== Registrasi Pengguna ===")
-            connection = connect_to_database()
-            register_user(connection)
+            controller.register_user()
         elif pilihan == "2":
-            print("\n=== Fitur Login (Belum diimplementasikan) ===")
-            # Fitur login akan ditambahkan di sini nanti
-        elif pilihan == "3":
             print("Keluar dari aplikasi.")
             break  # Keluar dari loop dan menutup aplikasi
         else:
